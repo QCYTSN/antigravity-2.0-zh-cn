@@ -5,6 +5,12 @@
   },
   "entries": {
     "New Conversation": "新建对话",
+    "New Conversation in Project": "在此项目中新建对话",
+    "Project options": "项目选项",
+    "Create New Project": "创建新项目",
+    "CLI Project": "命令行项目",
+    "Sidebar": "侧边栏",
+    "Toggle Side Panel": "切换侧边面板",
     "New Chat": "新建对话",
     "New Session": "新建会话",
     "Start a new conversation": "开始新对话",

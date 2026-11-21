@@ -40,6 +40,9 @@ export function looksLikeNonUiText(text, maxLength = 400) {
   if (/^[A-Za-z]:[\\/]/.test(trimmed)) return true;
   if (/^(\/|\.\/|\.\.\/|~\/)[\w.\-/]+/.test(trimmed)) return true;
   if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return true;
+  if (/^[\w.-]+\.(js|mjs|cjs|ts|tsx|jsx|json|jsonl|md|py|go|rs|css|html|bat|ps1|vbs|sh|yml|yaml|toml|txt|log|png|jpg|jpeg|svg|gif|webp)$/i.test(trimmed)) {
+    return true;
+  }
   if (/[{};]{2,}|=>|\b(const|let|var|function|import|export|return|SELECT|FROM)\b/.test(trimmed)) {
     return true;
   }
@@ -192,6 +195,9 @@ export function buildInjectorScript(payload) {
       if (/^[A-Za-z]:[\\\\/]/.test(trimmed)) return true;
       if (/^(\\/|\\.\\/|\\.\\.\\/|~\\/)[\\w.\\-/]+/.test(trimmed)) return true;
       if (/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(trimmed)) return true;
+      if (/^[\\w.-]+\\.(js|mjs|cjs|ts|tsx|jsx|json|jsonl|md|py|go|rs|css|html|bat|ps1|vbs|sh|yml|yaml|toml|txt|log|png|jpg|jpeg|svg|gif|webp)$/i.test(trimmed)) {
+        return true;
+      }
       if (/[{};]{2,}|=>|\\b(const|let|var|function|import|export|return|SELECT|FROM)\\b/.test(trimmed)) {
         return true;
       }

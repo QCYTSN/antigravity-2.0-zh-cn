@@ -27,12 +27,29 @@ test('精确匹配、忽略大小写、空白规范化、标点保留与正则�
   assert.equal(translateRawString('Thought for 1m 20s', bundle.entries, compiled, 400, lower), '已思考 1 分 20 秒');
   assert.equal(translateRawString('Exit code: 0', bundle.entries, compiled, 400, lower), '退出码：0');
   assert.equal(translateRawString('Step 2 of 5', bundle.entries, compiled, 400, lower), '第 2 / 5 步');
+  assert.equal(translateRawString('3mo', bundle.entries, compiled, 400, lower), '3 个月前');
+  assert.equal(translateRawString('Turn 3 of 6', bundle.entries, compiled, 400, lower), '第 3 / 6 轮');
+  assert.equal(
+    translateRawString('Ask anything, @ to mention, / for actions', bundle.entries, compiled, 400, lower),
+    '输入任何问题或任务，@ 引用上下文，/ 触发快捷操作'
+  );
+  assert.equal(
+    translateRawString('Select model, current: Gemini 4 Neon High', bundle.entries, compiled, 400, lower),
+    '选择模型，当前：Gemini 4 Neon High'
+  );
+  assert.equal(
+    translateRawString('Load older messages, showing 50 of 150', bundle.entries, compiled, 400, lower),
+    '加载更早消息（当前显示 50 / 150 条）'
+  );
+  assert.equal(translateRawString('Who @mentions whom', bundle.entries, compiled, 400, lower), '成员 @提及 关系图');
 });
 
-test('用户内容防误伤：路径、URL、代码片段与超长文本不会被误判或误译', () => {
+test('用户内容防误伤：路径、URL、文件名、代码片段与超长文本不会被误判或误译', () => {
   assert.equal(looksLikeNonUiText('https://antigravity.google/docs'), true);
   assert.equal(looksLikeNonUiText('D:\\Github_Ku\\antigravity-2.0-zh-cn'), true);
   assert.equal(looksLikeNonUiText('/usr/local/bin/node'), true);
+  assert.equal(looksLikeNonUiText('config.json'), true);
+  assert.equal(looksLikeNonUiText('injector-runtime.mjs'), true);
   assert.equal(looksLikeNonUiText('const x = () => { return 1; }'), true);
   assert.equal(looksLikeNonUiText('user@example.com'), true);
   assert.equal(looksLikeNonUiText('12345'), true);
