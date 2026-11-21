@@ -1,96 +1,74 @@
 {
   "_meta": {
     "module": "patterns",
-    "description": "严格锚定的正则模板词库，用于翻译带动态数字/状态的固定 UI 文案（绝不匹配任意代码或正文）"
+    "description": "严格锚定的正则模板词库，用于翻译带动态数字/时间/计数的固定 UI 文案（绝不匹配任意代码或正文）"
   },
   "patterns": [
-    {
-      "pattern": "^(\\d+)\\s+seconds?\\s+ago$",
-      "replace": "$1 秒前"
-    },
-    {
-      "pattern": "^(\\d+)\\s+minutes?\\s+ago$",
-      "replace": "$1 分钟前"
-    },
-    {
-      "pattern": "^(\\d+)\\s+hours?\\s+ago$",
-      "replace": "$1 小时前"
-    },
-    {
-      "pattern": "^(\\d+)\\s+days?\\s+ago$",
-      "replace": "$1 天前"
-    },
-    {
-      "pattern": "^(\\d+)\\s+weeks?\\s+ago$",
-      "replace": "$1 周前"
-    },
-    {
-      "pattern": "^(\\d+)\\s+months?\\s+ago$",
-      "replace": "$1 个月前"
-    },
-    {
-      "pattern": "^(\\d+)\\s+files?\\s+changed$",
-      "replace": "已变更 $1 个文件"
-    },
-    {
-      "pattern": "^(\\d+)\\s+changes?$",
-      "replace": "$1 处变更"
-    },
-    {
-      "pattern": "^(\\d+)\\s+subagents?\\s+running$",
-      "replace": "$1 个子智能体运行中"
-    },
-    {
-      "pattern": "^(\\d+)\\s+background\\s+tasks?$",
-      "replace": "$1 个后台任务"
-    },
-    {
-      "pattern": "^(\\d+)\\s+artifacts?$",
-      "replace": "$1 个产物"
-    },
-    {
-      "pattern": "^(\\d+)\\s+terminals?$",
-      "replace": "$1 个终端"
-    },
-    {
-      "pattern": "^(\\d+)\\s+plugins?\\s+installed$",
-      "replace": "已安装 $1 个插件"
-    },
-    {
-      "pattern": "^(\\d+)\\s+skills?$",
-      "replace": "$1 个技能"
-    },
-    {
-      "pattern": "^(\\d+)\\s+rules?$",
-      "replace": "$1 条规则"
-    },
-    {
-      "pattern": "^(\\d+)\\s+results?$",
-      "replace": "$1 条结果"
-    },
-    {
-      "pattern": "^Thought\\s+for\\s+(\\d+)\\s+seconds?$",
-      "replace": "已思考 $1 秒"
-    },
-    {
-      "pattern": "^Thought\\s+for\\s+(\\d+)s$",
-      "replace": "已思考 $1 秒"
-    },
-    {
-      "pattern": "^Thinking\\s+for\\s+(\\d+)s\\.\\.\\.$",
-      "replace": "思考中（$1 秒）..."
-    },
-    {
-      "pattern": "^Running\\s+for\\s+(\\d+)s$",
-      "replace": "已运行 $1 秒"
-    },
-    {
-      "pattern": "^Version\\s+([0-9]+\\.[0-9]+(?:\\.[0-9]+)?.*)$",
-      "replace": "版本 $1"
-    },
-    {
-      "pattern": "^Step\\s+(\\d+)\\s+of\\s+(\\d+)$",
-      "replace": "第 $1 / $2 步"
-    }
+    { "pattern": "^(\\d+)\\s*s\\s+ago$", "replace": "$1 秒前" },
+    { "pattern": "^(\\d+)\\s*m\\s+ago$", "replace": "$1 分钟前" },
+    { "pattern": "^(\\d+)\\s*min\\s+ago$", "replace": "$1 分钟前" },
+    { "pattern": "^(\\d+)\\s*h\\s+ago$", "replace": "$1 小时前" },
+    { "pattern": "^(\\d+)\\s*hr\\s+ago$", "replace": "$1 小时前" },
+    { "pattern": "^(\\d+)\\s*d\\s+ago$", "replace": "$1 天前" },
+    { "pattern": "^(\\d+)\\s*w\\s+ago$", "replace": "$1 周前" },
+    { "pattern": "^(\\d+)\\s*mo\\s+ago$", "replace": "$1 个月前" },
+    { "pattern": "^(\\d+)\\s+seconds?\\s+ago$", "replace": "$1 秒前" },
+    { "pattern": "^(\\d+)\\s+minutes?\\s+ago$", "replace": "$1 分钟前" },
+    { "pattern": "^(\\d+)\\s+hours?\\s+ago$", "replace": "$1 小时前" },
+    { "pattern": "^(\\d+)\\s+days?\\s+ago$", "replace": "$1 天前" },
+    { "pattern": "^(\\d+)\\s+weeks?\\s+ago$", "replace": "$1 周前" },
+    { "pattern": "^(\\d+)\\s+months?\\s+ago$", "replace": "$1 个月前" },
+    { "pattern": "^(\\d+)\\s+years?\\s+ago$", "replace": "$1 年前" },
+    { "pattern": "^Updated\\s+(\\d+)\\s+seconds?\\s+ago$", "replace": "更新于 $1 秒前" },
+    { "pattern": "^Updated\\s+(\\d+)\\s+minutes?\\s+ago$", "replace": "更新于 $1 分钟前" },
+    { "pattern": "^Updated\\s+(\\d+)\\s+hours?\\s+ago$", "replace": "更新于 $1 小时前" },
+    { "pattern": "^Updated\\s+(\\d+)\\s+days?\\s+ago$", "replace": "更新于 $1 天前" },
+    { "pattern": "^in\\s+(\\d+)\\s+seconds?$", "replace": "$1 秒后" },
+    { "pattern": "^in\\s+(\\d+)\\s+minutes?$", "replace": "$1 分钟后" },
+    { "pattern": "^in\\s+(\\d+)\\s+hours?$", "replace": "$1 小时后" },
+    { "pattern": "^in\\s+(\\d+)\\s+days?$", "replace": "$1 天后" },
+    { "pattern": "^(\\d+)\\s+files?\\s+changed$", "replace": "已变更 $1 个文件" },
+    { "pattern": "^(\\d+)\\s+files?$", "replace": "$1 个文件" },
+    { "pattern": "^(\\d+)\\s+lines?$", "replace": "$1 行" },
+    { "pattern": "^(\\d+)\\s+more\\s+lines?$", "replace": "还有 $1 行" },
+    { "pattern": "^Show\\s+(\\d+)\\s+more$", "replace": "再显示 $1 项" },
+    { "pattern": "^Show\\s+all\\s+(\\d+)$", "replace": "显示全部 $1 项" },
+    { "pattern": "^(\\d+)\\s+more$", "replace": "还有 $1 项" },
+    { "pattern": "^(\\d+)\\s+changes?$", "replace": "$1 处变更" },
+    { "pattern": "^(\\d+)\\s+conversations?$", "replace": "$1 个对话" },
+    { "pattern": "^(\\d+)\\s+projects?$", "replace": "$1 个项目" },
+    { "pattern": "^(\\d+)\\s+workspaces?$", "replace": "$1 个工作区" },
+    { "pattern": "^(\\d+)\\s+subagents?\\s+running$", "replace": "$1 个子智能体运行中" },
+    { "pattern": "^(\\d+)\\s+subagents?$", "replace": "$1 个子智能体" },
+    { "pattern": "^(\\d+)\\s+background\\s+tasks?$", "replace": "$1 个后台任务" },
+    { "pattern": "^(\\d+)\\s+tasks?\\s+running$", "replace": "$1 个任务运行中" },
+    { "pattern": "^(\\d+)\\s+tasks?$", "replace": "$1 个任务" },
+    { "pattern": "^(\\d+)\\s+artifacts?$", "replace": "$1 个产物" },
+    { "pattern": "^(\\d+)\\s+terminals?$", "replace": "$1 个终端" },
+    { "pattern": "^(\\d+)\\s+plugins?\\s+installed$", "replace": "已安装 $1 个插件" },
+    { "pattern": "^(\\d+)\\s+plugins?$", "replace": "$1 个插件" },
+    { "pattern": "^(\\d+)\\s+skills?$", "replace": "$1 个技能" },
+    { "pattern": "^(\\d+)\\s+rules?$", "replace": "$1 条规则" },
+    { "pattern": "^(\\d+)\\s+tools?$", "replace": "$1 个工具" },
+    { "pattern": "^(\\d+)\\s+servers?$", "replace": "$1 个服务器" },
+    { "pattern": "^(\\d+)\\s+steps?$", "replace": "$1 个步骤" },
+    { "pattern": "^(\\d+)\\s+errors?$", "replace": "$1 个错误" },
+    { "pattern": "^(\\d+)\\s+warnings?$", "replace": "$1 条警告" },
+    { "pattern": "^(\\d+)\\s+results?$", "replace": "$1 条结果" },
+    { "pattern": "^(\\d+)\\s+items?$", "replace": "$1 项" },
+    { "pattern": "^(\\d+)\\s+selected$", "replace": "已选 $1 项" },
+    { "pattern": "^(\\d+)\\s+active$", "replace": "$1 个运行中" },
+    { "pattern": "^Thought\\s+for\\s+(\\d+)\\s+seconds?$", "replace": "已思考 $1 秒" },
+    { "pattern": "^Thought\\s+for\\s+(\\d+)s$", "replace": "已思考 $1 秒" },
+    { "pattern": "^Thought\\s+for\\s+(\\d+)m\\s+(\\d+)s$", "replace": "已思考 $1 分 $2 秒" },
+    { "pattern": "^Thought\\s+for\\s+<1s$", "replace": "已思考 <1 秒" },
+    { "pattern": "^Thinking\\s+for\\s+(\\d+)s\\.\\.\\.$", "replace": "思考中（$1 秒）..." },
+    { "pattern": "^Running\\s+for\\s+(\\d+)s$", "replace": "已运行 $1 秒" },
+    { "pattern": "^Completed\\s+in\\s+(\\d+(?:\\.\\d+)?)s$", "replace": "已完成（耗时 $1 秒）" },
+    { "pattern": "^Version\\s+([0-9]+\\.[0-9]+(?:\\.[0-9]+)?.*)$", "replace": "版本 $1" },
+    { "pattern": "^Step\\s+(\\d+)\\s+of\\s+(\\d+)$", "replace": "第 $1 / $2 步" },
+    { "pattern": "^(\\d+)\\s+of\\s+(\\d+)$", "replace": "$1 / $2" },
+    { "pattern": "^Page\\s+(\\d+)\\s+of\\s+(\\d+)$", "replace": "第 $1 / $2 页" },
+    { "pattern": "^Exit\\s+code\\s*:?\\s*(-?\\d+)$", "replace": "退出码：$1" }
   ]
 }

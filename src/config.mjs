@@ -9,6 +9,7 @@ export const PROJECT_ROOT = path.resolve(__dirname, '..');
 
 export const DEFAULT_CONFIG = {
   exePath: '',
+  proxyMode: 'auto',
   cdpPort: 9229,
   cdpHost: '127.0.0.1',
   webConsoleEnabled: true,
@@ -16,8 +17,9 @@ export const DEFAULT_CONFIG = {
   autoOpenConsole: false,
   enabledOnStart: true,
   watchDictionaries: true,
-  pollIntervalMs: 1500,
-  maxTextLength: 220,
+  pollIntervalMs: 1200,
+  sweepIntervalMs: 2000,
+  maxTextLength: 400,
   extraLaunchArgs: [],
   ignoreSelectors: [
     '[data-ag-zh-ignore]',
@@ -27,10 +29,10 @@ export const DEFAULT_CONFIG = {
     '.cm-editor',
     '.xterm',
     '.terminal',
-    '.markdown-body',
-    '.prose',
     '[data-testid*="message-content"]',
-    '[data-testid*="code-block"]'
+    '[data-testid*="code-block"]',
+    '[data-role="user"]',
+    '.user-message-content'
   ]
 };
 

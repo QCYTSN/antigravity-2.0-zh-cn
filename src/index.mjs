@@ -1,8 +1,15 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { execFileSync, spawn } from 'node:child_process';
-import { loadConfig, resolveAntigravityExe } from './config.mjs';
+import { PROJECT_ROOT, loadConfig, resolveAntigravityExe } from './config.mjs';
 import { DEFAULT_DICT_DIR, loadDictionaries, watchDictionaries } from './dict-loader.mjs';
 import { CdpLocalizationManager } from './cdp-manager.mjs';
 import { startWebConsole } from './web-console.mjs';
+import {
+  buildChildProxyArgs,
+  buildChildProxyEnv,
+  resolveProxyConfig
+} from './proxy.mjs';
 
 function parseCliArgs(argv) {
   const args = argv.slice(2);
@@ -71,13 +78,22 @@ function showWindowsAlert(title, message) {
 async function runCheck(config) {
   console.log('=== Antigravity 2.0 无损汉化环境自检 ===');
   console.log(`Node.js 版本: ${process.version}`);
-  console.log(`原生 WebSocket 支持: ${typeof globalThis.WebSocket === 'function' ? '正常' : '缺失（请升级 Node >= 22）'}`);
+  console.log(
+    `原生 WebSocket 支持: ${typeof globalThis.WebSocket === 'function' ? '正常' : '缺失（请升级 Node >= 22）'}`
+  );
 
   const exe = resolveAntigravityExe(config);
   if (exe.path) {
     console.log(`Antigravity 2.0 程序路径: ${exe.path} (${exe.source})`);
   } else {
     console.log(`Antigravity 2.0 程序路径: 未找到 - ${exe.error}`);
+  }
+
+  const proxy = await resolveProxyConfig(config);
+  if (proxy.url) {
+    console.log(`本地代理自动探测: ${proxy.url} (${proxy.source}) [启动时将自动注入免 TUN 代理]`);
+  } else {
+    console.log(`本地代理自动探测: 未检测到本地代理 (${proxy.source}) [直连 / TUN 模式]`);
   }
 
   const bundle = loadDictionaries(DEFAULT_DICT_DIR);
@@ -87,9 +103,43 @@ async function runCheck(config) {
 
   const cdpAlive = await isCdpAlive(config.cdpHost, config.cdpPort);
   console.log(
-    `CDP 调试端口 (${config.cdpHost}:${config.cdpPort}): ${cdpAlive ? '在线（可直接热附着）' : '未开启'}`
+    `CDP 调试端口 (${config.cdpHost}:${config.cdpPort}): ${cdpAlive ? '在线（可直接热附着/扫描）' : '未开启'}`
   );
   console.log(`Antigravity 进程状态: ${isAntigravityProcessRunning() ? '运行中' : '未运行'}`);
+}
+
+async function runScan(config) {
+  const cdpAlive = await isCdpAlive(config.cdpHost, config.cdpPort);
+  if (!cdpAlive) {
+    console.error(
+      `[扫描失败] 本地 CDP 端口 ${config.cdpHost}:${config.cdpPort} 未开启。请先通过【启动中文版.bat】启动 Antigravity 2.0。`
+    );
+    process.exit(1);
+  }
+
+  const dictBundle = loadDictionaries(DEFAULT_DICT_DIR);
+  const manager = new CdpLocalizationManager({ config, dictBundle });
+  await manager.pollOnce();
+
+  const items = await manager.collectUntranslatedAll();
+  const outPath = path.join(PROJECT_ROOT, 'untranslated-report.json');
+  const report = {
+    generatedAt: new Date().toISOString(),
+    totalFound: items.length,
+    tip: '将需要补充的词条按 "英文原文": "中文译文" 格式写入 dict/user-custom.json 即可立即热生效。',
+    items,
+    templateEntries: Object.fromEntries(items.map((it) => [it.text, '']))
+  };
+
+  fs.writeFileSync(outPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+  console.log(`[扫描完成] 共发现 ${items.length} 条未翻译的界面候选词条，已导出到: ${outPath}`);
+  if (items.length > 0) {
+    console.log('前 20 条高频候选词条:');
+    for (const item of items.slice(0, 20)) {
+      console.log(`  - (${item.hint} x${item.count}) ${item.text}`);
+    }
+  }
+  manager.shutdown();
 }
 
 async function startEngine(config, { attachOnly, openConsole, guiAlert }) {
@@ -106,7 +156,7 @@ async function startEngine(config, { attachOnly, openConsole, guiAlert }) {
   );
 
   const manager = new CdpLocalizationManager({ config, dictBundle });
-  let childProc = null;
+  let spawnedByUs = false;
 
   if (!attachOnly) {
     const alreadyDebuggable = await isCdpAlive(config.cdpHost, config.cdpPort);
@@ -134,24 +184,45 @@ async function startEngine(config, { attachOnly, openConsole, guiAlert }) {
         process.exit(1);
       }
 
+      // 自动探测并注入代理（兼容免 TUN 代理启动，避免后端语言服务失联导致项目对话列表为空）
+      const proxy = await resolveProxyConfig(config);
+      const childEnv = buildChildProxyEnv(process.env, proxy.url);
+      const proxyArgs = buildChildProxyArgs(proxy.url);
+
+      if (proxy.url) {
+        console.log(`[代理] 已自动注入本地代理: ${proxy.url} (来源: ${proxy.source})`);
+      } else {
+        console.log(`[代理] 未检测到本地代理 (${proxy.source})，按直连/TUN 模式启动`);
+      }
+
       const launchArgs = [
+        ...proxyArgs,
         `--remote-debugging-address=${config.cdpHost}`,
         `--remote-debugging-port=${config.cdpPort}`,
         '--remote-allow-origins=*',
         ...config.extraLaunchArgs
       ];
 
+      const exeDir = path.dirname(exe.path);
       console.log(`[启动器] 正在拉起 Antigravity 2.0: ${exe.path}`);
-      childProc = spawn(exe.path, launchArgs, {
-        detached: false,
+      console.log(`[工作目录] ${exeDir}`);
+
+      const childProc = spawn(exe.path, launchArgs, {
+        cwd: exeDir,
+        env: childEnv,
+        detached: true,
         stdio: 'ignore',
         windowsHide: false
       });
 
       childProc.on('error', (err) => {
         console.error(`[启动失败] ${err.message}`);
+        if (guiAlert) showWindowsAlert('Antigravity 2.0 无损汉化', `启动失败: ${err.message}`);
         process.exit(1);
       });
+
+      childProc.unref();
+      spawnedByUs = true;
     }
   } else {
     console.log(`[热附着模式] 正在监听本地 CDP 端点 http://${config.cdpHost}:${config.cdpPort} ...`);
@@ -192,7 +263,7 @@ async function startEngine(config, { attachOnly, openConsole, guiAlert }) {
   };
 
   process.on('SIGINT', () => {
-    console.log('\n[退出] 正在关闭汉化引擎...');
+    console.log('\n[退出] 正在关闭汉化引擎（不会强制关闭 Antigravity）...');
     cleanup();
     process.exit(0);
   });
@@ -202,22 +273,9 @@ async function startEngine(config, { attachOnly, openConsole, guiAlert }) {
     process.exit(0);
   });
 
-  if (childProc) {
-    childProc.on('exit', (code) => {
-      // 注意：部分 Electron 启动器主进程会立即拉起子进程并退出自身，因此仅在 CDP 彻底失联后退出
-      setTimeout(async () => {
-        const stillAlive = await isCdpAlive(config.cdpHost, config.cdpPort);
-        if (!stillAlive && !isAntigravityProcessRunning()) {
-          console.log(`[退出] Antigravity 2.0 已关闭 (exit=${code ?? 0})，汉化引擎自动退出。`);
-          cleanup();
-          process.exit(0);
-        }
-      }, 3000);
-    });
-
-    // 定期检测：如果所有 Antigravity 进程均已关闭且曾经连上过，则优雅退出不留僵尸进程
+  if (spawnedByUs) {
     let everConnected = false;
-    const lifecycleTimer = setInterval(async () => {
+    const lifecycleTimer = setInterval(() => {
       if (manager.cdpReachable) {
         everConnected = true;
       } else if (everConnected && !isAntigravityProcessRunning()) {
@@ -237,6 +295,11 @@ async function main() {
 
   if (command === 'check') {
     await runCheck(config);
+    return;
+  }
+
+  if (command === 'scan') {
+    await runScan(config);
     return;
   }
 

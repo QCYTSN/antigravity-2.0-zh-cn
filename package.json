@@ -11,6 +11,7 @@
     "start": "node src/index.mjs launch",
     "attach": "node src/index.mjs attach",
     "check": "node src/index.mjs check",
+    "scan": "node src/index.mjs scan",
     "validate": "node scripts/validate-dict.mjs",
     "test": "node --test test/*.test.mjs"
   },

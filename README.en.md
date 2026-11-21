@@ -36,7 +36,8 @@ Unlike traditional Electron patches that unpack and overwrite `app.asar`, this p
   - Monitor attached Antigravity 2.0 renderer targets and live translated node counts.
   - **One-click live toggle** between Simplified Chinese and original English with no restart required.
   - **Fast Adaptation to App Updates**: Scan the active UI for newly added untranslated English controls, type translations inline, and persist them directly into [dict/user-custom.json](./dict/user-custom.json) with instant hot-push.
-- **Modular Dictionaries & Hot Reload**: Ships with 413 curated UI entries and 22 anchored regex templates (e.g., `5 minutes ago` → `5 分钟前`, `3 files changed` → `已变更 3 个文件`). Editing any `dict/*.json` file updates running windows immediately.
+- **Modular Dictionaries & Hot Reload**: Ships with 750+ curated UI entries and 66 anchored regex templates (with case-insensitive fallback, whitespace normalization, trailing punctuation preservation, same-origin `iframe`, and Shadow DOM coverage). Editing any `dict/*.json` file updates running windows immediately.
+- **Automatic Non-TUN Proxy Support**: Automatically detects environment variables, Windows System Proxy, and common local proxy ports, injecting proxy env vars and `--proxy-server` (while bypassing `localhost`) into Antigravity 2.0 so workspace conversations load reliably even without TUN mode.
 - **Windowless Desktop Shortcut**: One-click generator creates a Windows desktop shortcut with Antigravity's official icon and silent background startup.
 
 ---
@@ -139,6 +140,7 @@ You can then enable or disable it natively under **Customizations -> Plugins**.
 | `创建桌面快捷方式.bat` | Creates the windowless `Antigravity 2.0 中文版` Desktop shortcut with the official icon |
 | `启动中文版.bat` / `npm start` | Launches Antigravity 2.0 with live console logs (best for troubleshooting) |
 | `打开管理面板.bat` | Opens `http://127.0.0.1:19222` in your default browser |
+| `导出未翻译词条.bat` / `npm run scan` | Scans all running Antigravity 2.0 windows for untranslated English UI strings and exports `untranslated-report.json` |
 | `热附着汉化.bat` / `npm run attach` | Attaches only the localization engine to an already-debuggable Antigravity instance |
 | `npm run check` | Runs diagnostics (Node version, executable path, dictionaries, CDP & process status) |
 | `npm run validate` | Validates JSON syntax, duplicate keys, and regex patterns across `dict/` |
@@ -151,6 +153,7 @@ You can then enable or disable it natively under **Customizations -> Plugins**.
 | Key | Default | Description |
 | :--- | :--- | :--- |
 | `exePath` | `""` | Custom absolute path to `Antigravity.exe`; leave empty for automatic detection |
+| `proxyMode` | `"auto"` | Proxy handling: `"auto"` detects env / Windows System Proxy / common local ports; `"none"` disables proxy injection; or pass an explicit URL like `"http://127.0.0.1:7897"` |
 | `cdpPort` | `9229` | Local CDP debugging port (bound strictly to `127.0.0.1`) |
 | `cdpHost` | `"127.0.0.1"` | Localhost loopback address — **do not change to `0.0.0.0`** |
 | `webConsoleEnabled` | `true` | Enable or disable the local Web Console |

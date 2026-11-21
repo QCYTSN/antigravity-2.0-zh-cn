@@ -173,17 +173,24 @@ export class CdpLocalizationManager {
       entries: this.dictBundle.entries,
       patterns: this.dictBundle.patterns,
       ignoreSelectors: this.config.ignoreSelectors,
-      maxTextLength: this.config.maxTextLength
+      maxTextLength: this.config.maxTextLength,
+      sweepIntervalMs: this.config.sweepIntervalMs
     };
   }
 
   isTargetSupported(target) {
     if (!target || !target.webSocketDebuggerUrl) return false;
     const type = target.type || '';
-    if (!['page', 'webview', 'iframe', 'app'].includes(type)) return false;
+    if (!['page', 'webview', 'iframe', 'app', 'other'].includes(type)) return false;
     const url = String(target.url || '');
-    // 绝不汉化 DevTools 自身或空白错误页
-    if (url.startsWith('devtools://') || url.startsWith('chrome-error://')) return false;
+    // 绝不汉化 DevTools 自身、空白页或错误页
+    if (
+      url.startsWith('devtools://') ||
+      url.startsWith('chrome-error://') ||
+      url === 'about:blank'
+    ) {
+      return false;
+    }
     return true;
   }
 
