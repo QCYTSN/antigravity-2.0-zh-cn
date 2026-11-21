@@ -1,0 +1,26 @@
+{
+  "exePath": "",
+  "cdpPort": 9229,
+  "cdpHost": "127.0.0.1",
+  "webConsoleEnabled": true,
+  "webConsolePort": 19222,
+  "autoOpenConsole": false,
+  "enabledOnStart": true,
+  "watchDictionaries": true,
+  "pollIntervalMs": 1500,
+  "maxTextLength": 220,
+  "extraLaunchArgs": [],
+  "ignoreSelectors": [
+    "[data-ag-zh-ignore]",
+    "[contenteditable=\"true\"]",
+    "[contenteditable=\"\"]",
+    ".monaco-editor",
+    ".cm-editor",
+    ".xterm",
+    ".terminal",
+    ".markdown-body",
+    ".prose",
+    "[data-testid*=\"message-content\"]",
+    "[data-testid*=\"code-block\"]"
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "_meta": {
+    "module": "patterns",
+    "description": "严格锚定的正则模板词库，用于翻译带动态数字/状态的固定 UI 文案（绝不匹配任意代码或正文）"
+  },
+  "patterns": [
+    {
+      "pattern": "^(\\d+)\\s+seconds?\\s+ago$",
+      "replace": "$1 秒前"
+    },
+    {
+      "pattern": "^(\\d+)\\s+minutes?\\s+ago$",
+      "replace": "$1 分钟前"
+    },
+    {
+      "pattern": "^(\\d+)\\s+hours?\\s+ago$",
+      "replace": "$1 小时前"
+    },
+    {
+      "pattern": "^(\\d+)\\s+days?\\s+ago$",
+      "replace": "$1 天前"
+    },
+    {
+      "pattern": "^(\\d+)\\s+weeks?\\s+ago$",
+      "replace": "$1 周前"
+    },
+    {
+      "pattern": "^(\\d+)\\s+months?\\s+ago$",
+      "replace": "$1 个月前"
+    },
+    {
+      "pattern": "^(\\d+)\\s+files?\\s+changed$",
+      "replace": "已变更 $1 个文件"
+    },
+    {
+      "pattern": "^(\\d+)\\s+changes?$",
+      "replace": "$1 处变更"
+    },
+    {
+      "pattern": "^(\\d+)\\s+subagents?\\s+running$",
+      "replace": "$1 个子智能体运行中"
+    },
+    {
+      "pattern": "^(\\d+)\\s+background\\s+tasks?$",
+      "replace": "$1 个后台任务"
+    },
+    {
+      "pattern": "^(\\d+)\\s+artifacts?$",
+      "replace": "$1 个产物"
+    },
+    {
+      "pattern": "^(\\d+)\\s+terminals?$",
+      "replace": "$1 个终端"
+    },
+    {
+      "pattern": "^(\\d+)\\s+plugins?\\s+installed$",
+      "replace": "已安装 $1 个插件"
+    },
+    {
+      "pattern": "^(\\d+)\\s+skills?$",
+      "replace": "$1 个技能"
+    },
+    {
+      "pattern": "^(\\d+)\\s+rules?$",
+      "replace": "$1 条规则"
+    },
+    {
+      "pattern": "^(\\d+)\\s+results?$",
+      "replace": "$1 条结果"
+    },
+    {
+      "pattern": "^Thought\\s+for\\s+(\\d+)\\s+seconds?$",
+      "replace": "已思考 $1 秒"
+    },
+    {
+      "pattern": "^Thought\\s+for\\s+(\\d+)s$",
+      "replace": "已思考 $1 秒"
+    },
+    {
+      "pattern": "^Thinking\\s+for\\s+(\\d+)s\\.\\.\\.$",
+      "replace": "思考中（$1 秒）..."
+    },
+    {
+      "pattern": "^Running\\s+for\\s+(\\d+)s$",
+      "replace": "已运行 $1 秒"
+    },
+    {
+      "pattern": "^Version\\s+([0-9]+\\.[0-9]+(?:\\.[0-9]+)?.*)$",
+      "replace": "版本 $1"
+    },
+    {
+      "pattern": "^Step\\s+(\\d+)\\s+of\\s+(\\d+)$",
+      "replace": "第 $1 / $2 步"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "zh-cn-assistant",
+  "displayName": "中文助手规则 (Simplified Chinese)",
+  "version": "1.0.0",
+  "description": "让 Antigravity 2.0 中的 AI 智能体默认使用简体中文进行回复、规划、说明与撰写文档（可选配套原生插件）。"
+}
