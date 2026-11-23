@@ -15,80 +15,56 @@
 
 ---
 
-## 项目简介
+## 30 秒快速上手
 
-`antigravity-2.0-zh-cn` 是一个专门面向 **Google Antigravity 2.0 独立桌面端** 的外挂式中文汉化工具。
+1. **准备环境**：确认已安装 **Node.js >= 22** 与官方 **Antigravity 2.0** 桌面端（无需 `npm install`，零第三方依赖）。
+2. **获取项目**：克隆仓库或下载 ZIP 解压到任意目录（例如 `D:\Github_Ku\antigravity-2.0-zh-cn`）。
+3. **创建快捷方式**：双击 **`创建桌面快捷方式.bat`**（桌面会出现带官方图标的 **`Antigravity 2.0 中文版`**）。
+4. **启动使用**：**彻底退出**当前运行的原版 Antigravity（含右下角托盘图标），然后双击桌面 **`Antigravity 2.0 中文版`** 即可。
 
-与修改 `app.asar` 的传统补丁不同，本项目**完全不触碰官方安装目录下的任何文件**，也不需要安装额外的中文版客户端。它通过 Electron 标准本地调试协议（Chrome DevTools Protocol，仅限本机 `127.0.0.1`）在渲染层动态翻译界面文案，配合本地 Web 控制台实现**一键中英切换**、**词库热更新**与**新版本词条一键采集**。
-
-> **适用范围说明**：本项目**仅针对 Antigravity 2.0 独立桌面端**设计，不针对 Antigravity IDE（VS Code 版）。
+> **适用范围**：本项目**仅针对 Google Antigravity 2.0 独立桌面端**（Electron），不适用于旧版 Antigravity IDE（VS Code 版直接安装官方中文语言包扩展即可）。
 
 ---
 
 ## 核心特性
 
-- **零侵入 / 无损安全**：不修改 `Antigravity.exe`、`app.asar` 或任何官方配置；不破坏应用签名；官方自动升级不会损坏汉化；停止启动器即 100% 恢复原版。
-- **零第三方依赖**：直接基于 Node.js 22+ 原生 `fetch` 与 `WebSocket`，无需执行 `npm install`，下载即可运行。
-- **React 友好与防误伤保护**：
-  - 仅替换纯文本节点（`Text.nodeValue`）与安全 UI 属性（`placeholder`、`title`、`aria-label`、`data-tooltip`），绝不重写 `innerHTML`，避免 React 虚拟 DOM 异常。
-  - 自动跳过 `<code>`、`<pre>`、代码编辑器（Monaco / CodeMirror）、终端输出、输入框正文、Markdown 正文、URL、文件路径及代码特征字符串，防止误译用户内容。
-- **本地 Web 汉化控制台（`http://127.0.0.1:19222`）**：
-  - 实时查看已挂载的 Antigravity 2.0 窗口及已替换节点数。
-  - **一键无损切换中/英文**，无需重启客户端。
-  - **新版本快速适配**：一键扫描当前页面尚未翻译的英文 UI 控件，在线填写译文并立刻生效。
-- **社区校对全量词库 + 一键同步**：合规集成 [yiheng8023/antigravity-chinese](https://github.com/yiheng8023/antigravity-chinese)（MIT 协议，详见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)）词库，合并后共 **5,180+ 条精确词条与 460+ 条正则规则**（支持 LRU 高速缓存、快捷键保留、同源 `iframe`、`attachShadow` 动态 Shadow DOM 拦截与 Settings 延迟挂载重扫）。支持双击 **`同步社区词库.bat`**（`npm run sync-dict`）一键拉取社区最新词库。
-- **界面内悬浮「中 / EN」切换球 & 技术档位保留英文**：窗口右下角提供可拖拽的半透明切换球（左键瞬切中/英文，右键切换“技术档位如 `Turbo` / `Auto` / `Request Review` / `High` 保留英文”），并在 `dict/user-custom.json` 支持译文留空 `""` 强制保留任意英文原文。
-- **精准 Antigravity 2.0 防误伤隔离**：针对 Antigravity 2.0 真实 DOM 精准跳过 Lexical 输入框、焦点输入区、用户消息、AI 正文/思考内容、侧栏对话标题、项目卡片、代码/Diff 查看器与终端，确保绝不误伤代码和聊天内容。
-- **自动兼容免 TUN 代理**：启动器默认自动探测环境变量、Windows 系统代理及常见本地代理端口，向 Antigravity 2.0 注入代理参数并放行 `localhost`，避免免 TUN 环境下后端失联导致项目会话列表加载为空。
-- **无黑窗桌面快捷方式**：一键生成带 Antigravity 官方图标的桌面快捷方式，日常双击使用体验与原版一致。
+- **零侵入 / 无损安全**：绝不修改 `Antigravity.exe`、`app.asar` 或任何官方文件；不破坏签名；官方自动升级不损坏汉化；停止启动器即 100% 恢复原版。
+- **全量社区校对词库**：集成 MIT 社区校对词库（详见 [第三方开源声明与致谢](#第三方开源声明与致谢)），合并后共 **5,180+ 条精确词条与 460+ 条正则规则**，支持双击 **`同步社区词库.bat`** 一键更新词库。
+- **自动兼容免 TUN 代理**：自动探测环境变量、Windows 系统代理及常见本地代理端口，向 Antigravity 2.0 注入代理并放行 `localhost`，避免免 TUN 环境下各 Project 会话列表加载为空。
+- **界面内悬浮「中 / EN」切换球**：窗口右下角提供可拖拽半透明按钮——**左键**瞬切中/英文，**右键**一键切换“技术档位保留英文”（如 `Turbo` / `Auto` / `Request Review` / `High` 保持英文，说明文字全翻中文）。
+- **精准防误伤隔离**：针对 Antigravity 2.0 真实 DOM 精准跳过 Lexical 输入框、焦点输入区、用户消息、AI 回复/思考正文、侧栏对话标题、项目卡片、代码/Diff 查看器与终端。
+- **本地 Web 管理控制台（`http://127.0.0.1:19222`）**：可视化管理自定义词库、支持译文留空 `""` 强制保留英文，并可一键扫描新版本未翻译 UI 词条。
 
 ---
 
 ## 环境要求
 
-- **操作系统**：Windows 10 / 11
-- **目标软件**：已安装官方 **Google Antigravity 2.0** 桌面端
-- **运行时**：**Node.js >= 22.0.0**（需要原生 `WebSocket` 与 `fetch` 支持）
-
-可在终端执行以下命令确认 Node.js 版本：
-
-```powershell
-node -v
-# 输出应为 v22.x.x 或更高版本（例如 v24.15.0）
-```
+| 项目 | 要求 | 检查方式 |
+| :--- | :--- | :--- |
+| 操作系统 | Windows 10 / 11 | — |
+| 目标客户端 | 官方 Google Antigravity 2.0 桌面端 | — |
+| 运行时 | Node.js >= 22.0.0（内置原生 `WebSocket` 与 `fetch`） | 终端执行 `node -v` |
 
 ---
 
-## 使用方法
+## 详细使用指南
 
-### 第 1 步：获取项目
-
-方式 A（推荐，使用 Git 克隆）：
+### 1. 下载项目
 
 ```powershell
 git clone https://github.com/QCYTSN/antigravity-2.0-zh-cn.git
 cd antigravity-2.0-zh-cn
 ```
 
-方式 B：点击 GitHub 页面右上角 **Code -> Download ZIP**，解压到任意英文路径（例如 `D:\Github_Ku\antigravity-2.0-zh-cn`）。
+也可直接点击 GitHub 页面右上角 **Code -> Download ZIP** 解压使用。本项目零外部依赖，**不需要执行 `npm install`**。
 
-> 本项目零依赖，**不需要**运行 `npm install`。
-
-### 第 2 步：运行环境自检（可选，推荐首次执行）
-
-在项目根目录终端运行：
+### 2. 首次环境自检（推荐）
 
 ```powershell
 npm run check
 ```
 
-自检会确认：
-1. Node.js 版本与原生 `WebSocket` 支持是否正常；
-2. 是否自动找到了你本机的 `Antigravity.exe`；
-3. 词库文件是否加载正常；
-4. 当前是否有 Antigravity 进程正在运行。
-
-如果提示未能自动找到 `Antigravity.exe`，请打开根目录的 [config.json](./config.json)，手动填入你本机的绝对路径（注意 JSON 反斜杠需双写 `\\`）：
+自检会自动确认 Node.js 版本、本机 `Antigravity.exe` 路径、本地代理状态、词库条数及进程状态。如果软件装在非常规目录导致未自动找到，在 [config.json](./config.json) 中填入 `exePath` 即可（注意 JSON 反斜杠需双写 `\\`）：
 
 ```json
 {
@@ -96,147 +72,137 @@ npm run check
 }
 ```
 
-### 第 3 步：创建无黑窗桌面快捷方式（推荐）
+### 3. 日常启动方式
 
-双击项目根目录的 **`创建桌面快捷方式.bat`**。
+- **推荐（无黑窗）**：先运行一次 **`创建桌面快捷方式.bat`**，之后每次先确保原版已完全退出，直接双击桌面 **`Antigravity 2.0 中文版`**。
+- **调试/查看日志**：直接双击 **`启动中文版.bat`** 或终端运行 `npm start`。
 
-脚本会自动查找官方 `Antigravity.exe` 图标，并在桌面生成一个名为 **`Antigravity 2.0 中文版`** 的快捷方式。
+### 4. 快捷操作与词库管理
 
-### 第 4 步：启动中文版 Antigravity 2.0
+| 操作需求 | 使用方式 |
+| :--- | :--- |
+| 临时切回英文对照 | 左键点击窗口右下角悬浮球 **`中` / `EN`**（实时无损切换，无需重启） |
+| 技术档位保留英文 | 右键点击右下角悬浮球，或在管理面板勾选“技术档位保留英文” |
+| 打开本地管理面板 | 双击 **`打开管理面板.bat`** 或浏览器访问 `http://127.0.0.1:19222` |
+| 个人定制某条译文 | 在管理面板添加或编辑 [dict/user-custom.json](./dict/user-custom.json)（优先级最高；译文留空 `""` 表示强制保留英文原文） |
+| 同步社区最新词库 | Antigravity 更新后，双击 **`同步社区词库.bat`**（或运行 `npm run sync-dict`），不会覆盖你的个人自定义词库 |
+| 抓取新版本漏翻词条 | 在管理面板点“扫描当前界面”，或双击 **`导出未翻译词条.bat`**（`npm run scan`）导出报告 |
 
-1. **先彻底退出正在运行的原版 Antigravity**（请务必检查 Windows 右下角系统托盘图标并右键退出）。
-2. 双击桌面刚刚生成的 **`Antigravity 2.0 中文版`** 快捷方式（或直接双击项目目录下的 **`启动中文版.bat`** 查看实时日志）。
-3. Antigravity 2.0 启动完成后，界面会自动完成中文汉化；当你关闭 Antigravity 2.0 时，后台汉化引擎也会自动优雅退出，不残留僵尸进程。
+### 5. 可选配套：让 AI 默认用中文回复
 
-### 第 5 步：使用本地管理面板与适配新版词条
-
-启动中文版后，双击 **`打开管理面板.bat`** 或在浏览器访问：
-
-```text
-http://127.0.0.1:19222
-```
-
-你可以在面板中完成以下操作：
-- **一键切换中/英文**：点击右上角“暂停汉化（切回英文）”/“开启中文汉化”，Antigravity 界面实时无损切换。
-- **扫描并补齐未翻译词条**：在 Antigravity 2.0 中打开任意新页面（例如设置页、弹窗或新功能区），回到控制台点击 **“扫描当前界面”**，填入中文后点 **“录入”**，会立刻生效并自动持久化到 [dict/user-custom.json](./dict/user-custom.json)。
-- **在线管理自定义词库**：随时搜索、新增、覆盖或删除个人专属译文。
-
----
-
-## 可选配套：让 AI 回复也默认使用简体中文
-
-本工具负责汉化 **Antigravity 2.0 软件界面**；如果你希望 AI 智能体在对话回复、任务规划和文档产物（Artifacts）中也默认使用简体中文，可以启用项目附带的原生插件模板：
-
-将目录 `optional-agent-plugin/zh-cn-assistant` 整个复制到：
+本项目还附带了一个标准的 Antigravity 原生规则插件模板 `optional-agent-plugin/zh-cn-assistant/`。如果你希望 AI 智能体的对话回复、任务规划和文档产物也默认使用简体中文，将该文件夹复制到：
 
 ```text
 %USERPROFILE%\.gemini\config\plugins\zh-cn-assistant
 ```
 
-复制后即可在 Antigravity 的 **Customizations -> Plugins** 中作为标准原生插件自由开关。
+随后即可在 Antigravity 的 **Customizations -> Plugins** 中原生开关。
 
 ---
 
-## 常用脚本与命令速查
+## 注意事项与常见问题
 
-| 脚本 / 命令 | 说明 |
+<details open>
+<summary><strong>1. 启动前必须彻底退出原版 Antigravity（含系统托盘）</strong></summary>
+
+Electron 启用了单实例锁（Single Instance Lock）。如果原版 Antigravity 已在后台运行（哪怕只是缩在右下角托盘里），启动器无法为其开启本地 CDP 调试端口。请先右键托盘图标彻底退出，再双击中文版快捷方式启动。
+
+</details>
+
+<details>
+<summary><strong>2. 为什么软件顶部原生菜单栏 / 托盘右键菜单仍为英文？</strong></summary>
+
+这是零侵入无损架构的有意取舍：CDP 仅作用于 Chromium 渲染层（覆盖侧边栏、对话区、设置页、弹窗、插件市场、Swarm 与辅助面板等 95%+ 的高频交互区），不解包修改官方 `app.asar`，从而保证官方自动更新永不损坏、无文件校验报错。
+
+</details>
+
+<details>
+<summary><strong>3. 本地端口与安全性说明</strong></summary>
+
+CDP 端口（默认 `9229`）和 Web 管理面板端口（默认 `19222`）均严格绑定在 **`127.0.0.1` 本机回环地址**，外部网络无法访问。如本机有端口冲突，直接在 [config.json](./config.json) 中修改 `cdpPort` 或 `webConsolePort` 即可。
+
+</details>
+
+<details>
+<summary><strong>4. 免 TUN 代理说明（为什么不会出现项目列表为空）</strong></summary>
+
+`config.json` 中默认 `"proxyMode": "auto"`，启动时会自动按「环境变量 → Windows 系统代理 → 常见本地代理端口」顺序探测并注入代理，同时强制放行 `localhost,127.0.0.1,::1`。如果你使用 TUN 模式或直连网络且不想自动检测，可将其改为 `"none"`；也可填入固定地址如 `"http://127.0.0.1:7897"`。
+
+</details>
+
+<details>
+<summary><strong>5. 关于桌面快捷方式（.vbs）与完全卸载</strong></summary>
+
+- 桌面快捷方式调用的 [scripts/launcher-hidden.vbs](./scripts/launcher-hidden.vbs) 仅 8 行纯文本代码，用于避免启动时闪烁黑框；若安全软件误报，可直接改用 **`启动中文版.bat`** 或 `npm start`。
+- **零残留卸载**：因为从未改动官方安装目录，退出 Antigravity 后直接删除桌面快捷方式和本项目文件夹即可完全还原。
+
+</details>
+
+---
+
+## 常用脚本与配置参考
+
+<details>
+<summary>点击展开完整脚本列表与 <code>config.json</code> 配置表</summary>
+
+### 脚本与命令
+
+| 脚本 / 命令 | 作用 |
 | :--- | :--- |
-| `创建桌面快捷方式.bat` | 在桌面创建无黑窗、带官方图标的 `Antigravity 2.0 中文版` 快捷方式 |
-| `启动中文版.bat` / `npm start` | 在命令行窗口启动 Antigravity 2.0 并实时打印汉化挂载日志（排障首选） |
-| `打开管理面板.bat` | 在默认浏览器中打开 `http://127.0.0.1:19222` 管理面板 |
-| `同步社区词库.bat` / `npm run sync-dict` | 一键从上游 MIT 社区仓库拉取最新校对词库到 `dict/upstream/`（自动保留你的个人自定义覆盖） |
-| `导出未翻译词条.bat` / `npm run scan` | 一键全量扫描当前运行窗口中尚未翻译的英文 UI，导出为 `untranslated-report.json` 方便批量补全 |
-| `热附着汉化.bat` / `npm run attach` | 仅挂载汉化引擎（适用于 Antigravity 已以调试端口启动但需重连时） |
-| `npm run check` | 运行环境自检（Node 版本、程序路径、词库规模、端口与进程状态） |
-| `npm run validate` | 校验 `dict/` 下所有 JSON 词库格式、重复键与正则合法性 |
-| `npm test` | 运行内置自动化单元测试套件 |
+| `创建桌面快捷方式.bat` | 生成无黑窗、带官方图标的桌面快捷方式 |
+| `启动中文版.bat` / `npm start` | 启动 Antigravity 2.0 并实时打印汉化日志 |
+| `打开管理面板.bat` | 打开本地 Web 管理面板 `http://127.0.0.1:19222` |
+| `同步社区词库.bat` / `npm run sync-dict` | 拉取上游 MIT 社区最新校对词库到 `dict/upstream/` |
+| `导出未翻译词条.bat` / `npm run scan` | 扫描当前运行窗口未翻译 UI 词条并导出 `untranslated-report.json` |
+| `热附着汉化.bat` / `npm run attach` | 单独挂载到已开启本地调试端口的 Antigravity 实例 |
+| `npm run check` | 环境与代理自检 |
+| `npm run validate` | 校验所有词库 JSON 与正则合法性 |
+| `npm test` | 运行内置自动化单元测试 |
 
----
-
-## 配置项说明（`config.json`）
+### `config.json` 主要配置项
 
 | 字段 | 默认值 | 说明 |
 | :--- | :--- | :--- |
-| `exePath` | `""` | 手动指定 `Antigravity.exe` 绝对路径；留空则自动探测常见路径与注册表 |
-| `proxyMode` | `"auto"` | 代理策略：`"auto"` 自动继承环境变量/Windows 系统代理/常见本地代理端口；`"none"` 禁用代理注入；也可填如 `"http://127.0.0.1:7897"` |
-| `cdpPort` | `9229` | 本地 CDP 调试端口（仅绑定 `127.0.0.1`） |
-| `cdpHost` | `"127.0.0.1"` | 本地回环地址，**请勿改为 `0.0.0.0`** 以确保安全 |
-| `webConsoleEnabled` | `true` | 是否启动本地 Web 管理面板 |
-| `webConsolePort` | `19222` | 本地 Web 管理面板端口（如端口冲突可自行修改） |
-| `autoOpenConsole` | `false` | 设为 `true` 时，每次启动中文版会自动弹出管理面板网页 |
-| `enabledOnStart` | `true` | 启动时是否默认开启中文汉化 |
-| `keepEnglishTechLabels` | `false` | 设为 `true` 时，`Turbo`/`Auto`/`Default`/`Request Review`/`High`/`Medium`/`Low` 等技术档位保留英文，其余说明照常翻中文 |
-| `showFloatingToggle` | `true` | 是否在 Antigravity 2.0 窗口右下角显示可拖拽「中 / EN」悬浮切换按钮 |
-| `watchDictionaries` | `true` | 是否监听 `dict/` 及 `dict/upstream/` 目录变更并自动热更新词库 |
-| `pollIntervalMs` | `1500` | 检测新打开窗口/子面板的轮询间隔（毫秒） |
-| `maxTextLength` | `220` | 参与匹配的最大文本长度，超长段落自动跳过以防误伤正文 |
-| `extraLaunchArgs` | `[]` | 启动 `Antigravity.exe` 时额外附加的命令行参数 |
-| `ignoreSelectors` | 见文件 | 强制跳过翻译的 CSS 选择器列表（如代码编辑器、终端、正文容器） |
+| `exePath` | `""` | 自定义 `Antigravity.exe` 绝对路径，留空自动探测 |
+| `proxyMode` | `"auto"` | `"auto"` 自动继承代理 / `"none"` 关闭 / 或填写如 `"http://127.0.0.1:7897"` |
+| `cdpPort` | `9229` | 本机 CDP 调试端口（仅 `127.0.0.1`） |
+| `webConsoleEnabled` | `true` | 是否开启本地 Web 管理面板 |
+| `webConsolePort` | `19222` | 本地 Web 管理面板端口 |
+| `enabledOnStart` | `true` | 启动时默认开启中文 |
+| `keepEnglishTechLabels` | `false` | `true` 时保留 `Turbo`/`Auto`/`Default`/`Request Review`/`High`/`Medium`/`Low` 等英文档位 |
+| `showFloatingToggle` | `true` | 是否显示右下角悬浮「中 / EN」切换球 |
+| `watchDictionaries` | `true` | 是否监听 `dict/` 变更并实时热推送 |
+| `ignoreSelectors` | 见文件 | 跳过翻译的 CSS 保护选择器列表 |
+
+</details>
 
 ---
 
-## 注意事项与常见问题（必读）
+## 第三方开源声明与致谢
 
-### 1. 启动前必须彻底退出原版 Antigravity（最常见）
-Electron 客户端启用了**单实例锁（Single Instance Lock）**。如果原版 Antigravity 已经在后台运行（哪怕只是最小化到了右下角系统托盘），再通过启动器拉起时，新进程会直接把焦点交给旧进程并退出，导致本地调试端口无法打开。
+本项目高度重视开源合规与社区版权归属，以下明确区分**直接引入的第三方词库**、**思路借鉴**与**本项目独立实现部分**：
 
-- **正确做法**：先右键右下角托盘图标彻底退出 Antigravity，再双击中文版快捷方式启动。
-- **如何确认**：运行 `npm run check`，看到“Antigravity 进程状态: 未运行”后再启动即可。
+### 1. 直接引入的第三方 MIT 词库数据
 
-### 2. 为什么顶部原生系统菜单 / 托盘右键菜单仍为英文？
-这是**无损零侵入架构**的有意取舍：CDP 只作用于渲染层（覆盖侧边栏、对话区、设置页、弹窗、自定义面板、产物与辅助面板等 95%+ 的日常交互界面），不解包也不修改官方 `app.asar`。这样能换取官方自动更新永不损坏、无文件校验报错、零风险的长期稳定性。
+本项目 `dict/upstream/` 目录下的以下 3 个词库文件直接同步自 MIT 开源项目 **[yiheng8023/antigravity-chinese](https://github.com/yiheng8023/antigravity-chinese)**（版权归属 `Copyright (c) 2026 Antigravity Chinese Localization Contributors`）：
 
-### 3. 安全性与端口占用说明
-- CDP 端口（默认 `9229`）与 Web 控制台端口（默认 `19222`）均严格绑定在 **`127.0.0.1` 本地回环地址**，局域网或公网设备均无法访问。
-- 如本机已有其他软件占用 `9229` 或 `19222`，直接修改 [config.json](./config.json) 中的对应端口号即可。
+- `dict/upstream/zh-CN.json`
+- `dict/upstream/swarm.json`
+- `dict/upstream/official-plugin-descriptions.json`
 
-### 4. 关于无黑窗启动脚本（`.vbs`）的安全提示
-桌面快捷方式调用的 [scripts/launcher-hidden.vbs](./scripts/launcher-hidden.vbs) 仅有 8 行纯文本代码，作用仅仅是静默调用 `node src/index.mjs launch --gui-alert` 以避免弹出黑色命令行窗口。若个别安全软件对 `.vbs` 有敏感提示，可以放行，或直接使用 **`启动中文版.bat`** / `npm start` 启动。
+完整上游 MIT 许可协议原文与版权声明见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。感谢上游维护者与贡献者为 Antigravity 2.x 社区持续校对的高质量词库！
 
-### 5. 如果遇到个别代码/用户内容被误翻译怎么办？
-本引擎默认只匹配词库中明确登记的 UI 文案，并排除了常见代码编辑器与正文容器。如果未来版本 DOM 结构变化导致某区域被误译：
-- 将该区域的 CSS 选择器添加到 [config.json](./config.json) 的 `ignoreSelectors` 中；
-- 或在 `dict/` 中移除/调整对应词条，保存后立即热生效。
+### 2. 设计思路借鉴与致谢
 
-### 6. 如何完全卸载与还原？
-因为本工具**从未修改过 Antigravity 任何安装文件**：
-1. 退出 Antigravity 2.0；
-2. 删除桌面的 `Antigravity 2.0 中文版` 快捷方式和本项目文件夹（如启用了可选插件，顺手删掉 `%USERPROFILE%\.gemini\config\plugins\zh-cn-assistant`）；
-3. 正常打开官方原版 Antigravity 即可，零残留。
+- **[qqxpee/antigravity2-cn](https://github.com/qqxpee/antigravity2-cn)**：借鉴了其对 Antigravity 2.0 真实 DOM 边界（Lexical 编辑器、用户消息与 AI 正文 `data-testid` 隔离）、动态 `attachShadow` 拦截及高频短词保护的工程思路。*（本项目未复制其任何源码或词库文件。）*
+- **[yuexps/Antigravity-Hans](https://github.com/yuexps/Antigravity-Hans)**：借鉴了界面内可拖拽「中 / EN」悬浮切换按钮、“技术档位保留英文”偏好预设以及属性变更重扫的交互设计思路。*（本项目未复制其任何源码或词库文件。）*
+
+### 3. 本项目独立实现部分
+
+本项目 `src/`、`scripts/`、`test/` 下的所有代码均由本项目从零独立编写（Node.js 22+ 零第三方依赖），包括：无损 CDP 多目标管理器、自动免 TUN 代理探测与注入模块、三层优先级词库热更新加载器、渲染层 LRU 缓存翻译运行时、本地 Web 管理控制台、未翻译词条扫描导出器、上游词库一键同步脚本以及完整自动化测试套件。
 
 ---
-
-## 目录结构
-
-```text
-antigravity-2.0-zh-cn/
-├── config.json                  # 本地配置文件
-├── config.example.json          # 默认配置模板
-├── dict/                        # 模块化词库（支持文件修改自动热更新）
-│   ├── common.json              # 通用按钮、弹窗、菜单、状态
-│   ├── sidebar.json             # 侧边栏导航、项目、会话列表
-│   ├── chat.json                # 对话画布、工具调用、产物、辅助面板
-│   ├── settings.json            # 全局/项目设置、权限与沙箱策略
-│   ├── customizations.json      # Skills / Rules / Plugins / Hooks / MCP / 定时任务
-│   ├── patterns.json            # 锚定正则模板（时间/计数等动态 UI 文本）
-│   └── user-custom.json         # 用户自定义词库（优先级最高）
-├── src/                         # 核心源码（零第三方依赖）
-├── scripts/                     # 桌面快捷方式生成、无黑窗包装与词库校验
-├── optional-agent-plugin/       # 可选配套原生中文回复插件模板
-└── test/                        # Node 内置单元测试
-```
-
----
-
-## 参与贡献
-
-欢迎提交 PR 补充新版本词条或优化界面保护规则！提交前请运行以下命令确保校验与测试全部通过：
-
-```powershell
-npm run validate
-npm test
-```
 
 ## 开源协议
 
-本项目基于 [MIT License](./LICENSE) 开源。
+本项目原创代码基于 [MIT License](./LICENSE) 开源；第三方词库遵循其各自许可协议（见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)）。
