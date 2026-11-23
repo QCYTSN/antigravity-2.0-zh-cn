@@ -36,7 +36,9 @@ Unlike traditional Electron patches that unpack and overwrite `app.asar`, this p
   - Monitor attached Antigravity 2.0 renderer targets and live translated node counts.
   - **One-click live toggle** between Simplified Chinese and original English with no restart required.
   - **Fast Adaptation to App Updates**: Scan the active UI for newly added untranslated English controls, type translations inline, and persist them directly into [dict/user-custom.json](./dict/user-custom.json) with instant hot-push.
-- **Modular Dictionaries & Hot Reload**: Ships with 750+ curated UI entries and 66 anchored regex templates (with case-insensitive fallback, whitespace normalization, trailing punctuation preservation, same-origin `iframe`, and Shadow DOM coverage). Editing any `dict/*.json` file updates running windows immediately.
+- **Community-Verified Dictionaries + One-Click Upstream Sync**: Integrates the MIT-licensed [yiheng8023/antigravity-chinese](https://github.com/yiheng8023/antigravity-chinese) dictionaries (see [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)), providing **5,180+ exact UI entries and 460+ regex rules** backed by an LRU translation cache, shortcut preservation, same-origin `iframe` traversal, dynamic `attachShadow` hooking, and async attribute re-scanning. Run `npm run sync-dict` (or `同步社区词库.bat`) anytime to fetch the latest community updates while preserving your `dict/user-custom.json` overrides.
+- **In-App Draggable `中 / EN` Toggle & Keep-Tech-Labels Preset**: A compact floating pill in the bottom-right corner lets you toggle Chinese/English with a single click (right-click to toggle keeping technical preset names like `Turbo` / `Auto` / `Request Review` / `High` in English). Empty values (`""`) in `dict/user-custom.json` explicitly force any string to stay in English.
+- **Surgical Antigravity 2.0 Content Isolation**: Precisely excludes Lexical editors, focused inputs, user prompts, AI response/thinking prose, sidebar conversation titles, project cards, file/diff viewers, and terminals.
 - **Automatic Non-TUN Proxy Support**: Automatically detects environment variables, Windows System Proxy, and common local proxy ports, injecting proxy env vars and `--proxy-server` (while bypassing `localhost`) into Antigravity 2.0 so workspace conversations load reliably even without TUN mode.
 - **Windowless Desktop Shortcut**: One-click generator creates a Windows desktop shortcut with Antigravity's official icon and silent background startup.
 
@@ -140,6 +142,7 @@ You can then enable or disable it natively under **Customizations -> Plugins**.
 | `创建桌面快捷方式.bat` | Creates the windowless `Antigravity 2.0 中文版` Desktop shortcut with the official icon |
 | `启动中文版.bat` / `npm start` | Launches Antigravity 2.0 with live console logs (best for troubleshooting) |
 | `打开管理面板.bat` | Opens `http://127.0.0.1:19222` in your default browser |
+| `同步社区词库.bat` / `npm run sync-dict` | Syncs the latest MIT community dictionaries into `dict/upstream/` while preserving personal overrides |
 | `导出未翻译词条.bat` / `npm run scan` | Scans all running Antigravity 2.0 windows for untranslated English UI strings and exports `untranslated-report.json` |
 | `热附着汉化.bat` / `npm run attach` | Attaches only the localization engine to an already-debuggable Antigravity instance |
 | `npm run check` | Runs diagnostics (Node version, executable path, dictionaries, CDP & process status) |
@@ -160,7 +163,9 @@ You can then enable or disable it natively under **Customizations -> Plugins**.
 | `webConsolePort` | `19222` | Port for the local Web Console (change if conflicted) |
 | `autoOpenConsole` | `false` | Automatically open the Web Console in browser on launch when set to `true` |
 | `enabledOnStart` | `true` | Whether Chinese localization starts enabled |
-| `watchDictionaries` | `true` | Watch `dict/` and hot-push edits automatically |
+| `keepEnglishTechLabels` | `false` | Keeps technical preset/effort labels (`Turbo`, `Auto`, `Default`, `Request Review`, `High`, `Medium`, `Low`) in English while translating surrounding descriptions |
+| `showFloatingToggle` | `true` | Shows the draggable in-app `中 / EN` toggle button in the bottom-right corner |
+| `watchDictionaries` | `true` | Watch `dict/` and `dict/upstream/` and hot-push edits automatically |
 | `pollIntervalMs` | `1500` | Polling interval (ms) for newly opened renderer windows/panels |
 | `maxTextLength` | `220` | Maximum text length eligible for translation (protects long body paragraphs) |
 | `extraLaunchArgs` | `[]` | Additional CLI flags forwarded to `Antigravity.exe` |

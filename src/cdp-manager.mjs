@@ -158,6 +158,8 @@ export class CdpLocalizationManager {
     this.config = config;
     this.dictBundle = dictBundle;
     this.enabled = Boolean(config.enabledOnStart);
+    this.keepEnglishTechLabels = Boolean(config.keepEnglishTechLabels);
+    this.showFloatingToggle = config.showFloatingToggle !== false;
     this.logger = logger;
     this.sessions = new Map();
     this.pollTimer = null;
@@ -170,8 +172,11 @@ export class CdpLocalizationManager {
   getPayload() {
     return {
       enabled: this.enabled,
+      keepEnglishTechLabels: this.keepEnglishTechLabels,
+      showFloatingToggle: this.showFloatingToggle,
       entries: this.dictBundle.entries,
       patterns: this.dictBundle.patterns,
+      keepOriginal: this.dictBundle.keepOriginal || [],
       ignoreSelectors: this.config.ignoreSelectors,
       maxTextLength: this.config.maxTextLength,
       sweepIntervalMs: this.config.sweepIntervalMs
@@ -292,6 +297,16 @@ export class CdpLocalizationManager {
     return this.broadcastUpdate();
   }
 
+  async setOptions(opts = {}) {
+    if (typeof opts.keepEnglishTechLabels === 'boolean') {
+      this.keepEnglishTechLabels = opts.keepEnglishTechLabels;
+    }
+    if (typeof opts.showFloatingToggle === 'boolean') {
+      this.showFloatingToggle = opts.showFloatingToggle;
+    }
+    return this.broadcastUpdate();
+  }
+
   async updateDictionaries(nextBundle) {
     this.dictBundle = nextBundle;
     return this.broadcastUpdate();
@@ -338,12 +353,15 @@ export class CdpLocalizationManager {
 
     return {
       enabled: this.enabled,
+      keepEnglishTechLabels: this.keepEnglishTechLabels,
+      showFloatingToggle: this.showFloatingToggle,
       cdpReachable: this.cdpReachable,
       cdpEndpoint: `${this.config.cdpHost}:${this.config.cdpPort}`,
       lastError: this.lastError,
       attachedCount: targets.length,
       targets,
       dictStats: this.dictBundle.stats,
+      upstreamMeta: this.dictBundle.upstreamMeta || null,
       modules: this.dictBundle.modules
     };
   }

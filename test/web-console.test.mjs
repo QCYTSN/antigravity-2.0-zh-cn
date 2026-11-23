@@ -20,6 +20,8 @@ test('本地 Web 控制台 API 支持状态查询、开关切换与自定义词�
   );
 
   let enabled = true;
+  let keepEnglishTechLabels = false;
+  let showFloatingToggle = true;
   let bundle = loadDictionaries(tmpDir);
   let updateCalls = 0;
 
@@ -27,19 +29,36 @@ test('本地 Web 控制台 API 支持状态查询、开关切换与自定义词�
     get enabled() {
       return enabled;
     },
+    get keepEnglishTechLabels() {
+      return keepEnglishTechLabels;
+    },
+    get showFloatingToggle() {
+      return showFloatingToggle;
+    },
     async getStatus() {
       return {
         enabled,
+        keepEnglishTechLabels,
+        showFloatingToggle,
         cdpReachable: false,
         cdpEndpoint: '127.0.0.1:9229',
         attachedCount: 0,
         targets: [],
         dictStats: bundle.stats,
+        upstreamMeta: null,
         modules: bundle.modules
       };
     },
     async setEnabled(flag) {
       enabled = Boolean(flag);
+    },
+    async setOptions(opts = {}) {
+      if (typeof opts.keepEnglishTechLabels === 'boolean') {
+        keepEnglishTechLabels = opts.keepEnglishTechLabels;
+      }
+      if (typeof opts.showFloatingToggle === 'boolean') {
+        showFloatingToggle = opts.showFloatingToggle;
+      }
     },
     async updateDictionaries(next) {
       bundle = next;
@@ -68,7 +87,7 @@ test('本地 Web 控制台 API 支持状态查询、开关切换与自定义词�
     const html = await htmlResp.text();
     assert.ok(html.includes('Antigravity 2.0 无损汉化控制台'));
 
-    // 2. 切换中/英文开关
+    // 2. 切换中/英文开关 & 偏好开关
     const toggleResp = await fetch(`${base}/api/toggle`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -77,6 +96,15 @@ test('本地 Web 控制台 API 支持状态查询、开关切换与自定义词�
     const toggleData = await toggleResp.json();
     assert.equal(toggleData.enabled, false);
     assert.equal(enabled, false);
+
+    const optResp = await fetch(`${base}/api/options`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ keepEnglishTechLabels: true, showFloatingToggle: false })
+    });
+    const optData = await optResp.json();
+    assert.equal(optData.keepEnglishTechLabels, true);
+    assert.equal(optData.showFloatingToggle, false);
 
     // 3. 在线添加自定义词条并触发热更新
     const addResp = await fetch(`${base}/api/custom`, {

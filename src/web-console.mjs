@@ -24,7 +24,7 @@ function readJsonBody(req) {
       try {
         const text = Buffer.concat(chunks).toString('utf8') || '{}';
         resolve(JSON.parse(text));
-      } catch (err) {
+      } catch {
         reject(new Error('JSON 格式错误'));
       }
     });
@@ -46,7 +46,7 @@ function renderHtml() {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Antigravity 2.0 无损汉化控制台</title>
+  <title>Antigravity 2.0 无损汉化控制台 v2.0</title>
   <style>
     :root {
       color-scheme: dark;
@@ -69,17 +69,17 @@ function renderHtml() {
       color: var(--text);
       line-height: 1.5;
     }
-    .wrap { max-width: 1080px; margin: 0 auto; padding: 24px 20px 48px; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 24px 20px 48px; }
     header {
       display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
       gap: 16px; padding-bottom: 18px; border-bottom: 1px solid var(--border);
     }
     h1 { margin: 0; font-size: 22px; }
     .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
-    .toolbar { display: flex; gap: 10px; align-items: center; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
     button {
       background: var(--accent); color: #fff; border: none; border-radius: 8px;
-      padding: 8px 14px; font-size: 14px; cursor: pointer; font-weight: 500;
+      padding: 8px 14px; font-size: 13px; cursor: pointer; font-weight: 500;
     }
     button:hover { background: var(--accent-hover); }
     button.secondary { background: #262c3d; color: var(--text); }
@@ -95,7 +95,7 @@ function renderHtml() {
       padding: 16px;
     }
     .card-label { color: var(--muted); font-size: 12px; }
-    .card-val { font-size: 24px; font-weight: 700; margin-top: 4px; }
+    .card-val { font-size: 22px; font-weight: 700; margin-top: 4px; }
     .badge {
       display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px;
       border-radius: 999px; font-size: 12px; font-weight: 600;
@@ -111,6 +111,8 @@ function renderHtml() {
       gap: 10px; margin-bottom: 14px;
     }
     .section h2 { margin: 0; font-size: 16px; }
+    .switches { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 6px; }
+    .switch-item { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; }
     input[type="text"] {
       background: #0d1016; border: 1px solid var(--border); color: var(--text);
       border-radius: 8px; padding: 8px 10px; font-size: 13px;
@@ -133,8 +135,8 @@ function renderHtml() {
   <div class="wrap">
     <header>
       <div>
-        <h1>Antigravity 2.0 无损汉化控制台</h1>
-        <div class="sub">零侵入 CDP 动态渲染层汉化 · 词库修改实时热生效 · 不修改任何官方安装文件</div>
+        <h1>Antigravity 2.0 无损汉化控制台 v2.0</h1>
+        <div class="sub">零侵入 CDP 动态汉化 · 4800+ MIT 社区校对词库 · 免 TUN 代理兼容 · 悬浮中/英切换球</div>
       </div>
       <div class="toolbar">
         <button id="toggleBtn">切换中/英文</button>
@@ -159,6 +161,23 @@ function renderHtml() {
       <div class="card">
         <div class="card-label">词库规模（精确 + 正则）</div>
         <div class="card-val" id="dictCount">0</div>
+        <div class="sub" id="upstreamInfo"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <h2>偏好开关（实时热生效）</h2>
+      </div>
+      <div class="switches">
+        <label class="switch-item">
+          <input type="checkbox" id="techLabelsChk" />
+          <span>技术档位保留英文（Turbo / Auto / Default / Request Review / High / Medium / Low 等保留英文，说明照常翻中文）</span>
+        </label>
+        <label class="switch-item">
+          <input type="checkbox" id="floatingToggleChk" />
+          <span>在 Antigravity 2.0 界面右下角显示可拖拽「中 / EN」悬浮切换按钮</span>
+        </label>
       </div>
     </div>
 
@@ -179,11 +198,11 @@ function renderHtml() {
         <button id="scanBtn">扫描当前界面</button>
       </div>
       <div class="sub" style="margin-bottom:12px;">
-        仅采集按钮、菜单、标签、标题和提示占位符等 UI 控件，自动跳过代码区和对话正文。填好中文点“录入”即可实时生效并写入 <code>dict/user-custom.json</code>。
+        自动跳过代码区、编辑器、对话正文、侧栏对话标题与项目卡片。填好中文点“录入”即可实时生效并写入 <code>dict/user-custom.json</code>。
       </div>
       <table>
         <thead><tr><th>英文原文</th><th>控件类型</th><th>译文输入</th><th>操作</th></tr></thead>
-        <tbody id="scanBody"><tr><td colspan="4" class="muted">点击右上角“扫描当前界面”即可捕获 Antigravity 2.0 新增未汉化词条。</td></tr></tbody>
+        <tbody id="scanBody"><tr><td colspan="4" class="muted">点击右上角“扫描当前界面”即可捕获当前页面尚未汉化的 UI 词条。</td></tr></tbody>
       </table>
     </div>
 
@@ -192,13 +211,16 @@ function renderHtml() {
         <h2>3. 自定义词库管理（<code>dict/user-custom.json</code>，优先级最高）</h2>
         <input type="text" id="searchInput" placeholder="搜索自定义词条..." />
       </div>
+      <div class="sub" style="margin-bottom:10px;">
+        提示：译文留空保存即表示<strong>强制保留该英文原文不被翻译</strong>。
+      </div>
       <form class="row-form" id="addForm">
         <input type="text" id="srcInput" placeholder="英文原文，例如：Scheduled Tasks" required />
-        <input type="text" id="dstInput" placeholder="中文译文，例如：定时任务" required />
-        <button type="submit">添加 / 覆盖并立即生效</button>
+        <input type="text" id="dstInput" placeholder="中文译文（留空则强制保留英文）" />
+        <button type="submit">保存并立即生效</button>
       </form>
       <table>
-        <thead><tr><th>英文原文</th><th>中文译文</th><th style="width:100px;">操作</th></tr></thead>
+        <thead><tr><th>英文原文</th><th>中文译文 / 策略</th><th style="width:100px;">操作</th></tr></thead>
         <tbody id="customBody"><tr><td colspan="3" class="muted">暂无自定义词条</td></tr></tbody>
       </table>
     </div>
@@ -244,7 +266,12 @@ function renderHtml() {
       document.getElementById('targetCount').textContent = String(data.attachedCount);
       document.getElementById('dictCount').textContent =
         data.dictStats.totalEntries + ' + ' + data.dictStats.totalPatterns;
+      document.getElementById('upstreamInfo').textContent = data.upstreamMeta
+        ? '含 MIT 社区词库（同步于 ' + data.upstreamMeta.syncedAt.slice(0, 10) + '）'
+        : '本地词库模式';
       document.getElementById('endpointText').textContent = 'CDP: ' + data.cdpEndpoint;
+      document.getElementById('techLabelsChk').checked = Boolean(data.keepEnglishTechLabels);
+      document.getElementById('floatingToggleChk').checked = data.showFloatingToggle !== false;
 
       const tbody = document.getElementById('targetsBody');
       if (!data.targets.length) {
@@ -274,7 +301,8 @@ function renderHtml() {
         return;
       }
       tbody.innerHTML = rows.map(([k, v]) =>
-        '<tr><td><code>' + escapeHtml(k) + '</code></td><td>' + escapeHtml(v) +
+        '<tr><td><code>' + escapeHtml(k) + '</code></td><td>' +
+        (v ? escapeHtml(v) : '<span class="badge warn">强制保留英文</span>') +
         '</td><td><button class="danger" data-del="' + escapeHtml(k) + '">删除</button></td></tr>'
       ).join('');
     }
@@ -283,6 +311,24 @@ function renderHtml() {
       await api('/api/toggle', { method: 'POST', body: JSON.stringify({ enabled: !currentEnabled }) });
       await loadStatus();
       showToast(currentEnabled ? '已开启中文汉化' : '已无损切回原版英文');
+    });
+
+    document.getElementById('techLabelsChk').addEventListener('change', async (e) => {
+      await api('/api/options', {
+        method: 'POST',
+        body: JSON.stringify({ keepEnglishTechLabels: e.target.checked })
+      });
+      await loadStatus();
+      showToast(e.target.checked ? '已开启：技术档位保留英文' : '已关闭：技术档位恢复中文翻译');
+    });
+
+    document.getElementById('floatingToggleChk').addEventListener('change', async (e) => {
+      await api('/api/options', {
+        method: 'POST',
+        body: JSON.stringify({ showFloatingToggle: e.target.checked })
+      });
+      await loadStatus();
+      showToast(e.target.checked ? '已显示悬浮「中 / EN」按钮' : '已隐藏悬浮切换按钮');
     });
 
     document.getElementById('reloadDictBtn').addEventListener('click', async () => {
@@ -299,12 +345,12 @@ function renderHtml() {
       e.preventDefault();
       const source = document.getElementById('srcInput').value.trim();
       const target = document.getElementById('dstInput').value.trim();
-      if (!source || !target) return;
+      if (!source) return;
       await api('/api/custom', { method: 'POST', body: JSON.stringify({ source, target }) });
       document.getElementById('srcInput').value = '';
       document.getElementById('dstInput').value = '';
       await Promise.all([loadCustom(), loadStatus()]);
-      showToast('已保存并实时生效：' + source + ' -> ' + target);
+      showToast(target ? '已保存并实时生效：' + source + ' -> ' + target : '已设置保留英文原文：' + source);
     });
 
     document.getElementById('customBody').addEventListener('click', async (e) => {
@@ -388,6 +434,22 @@ export function startWebConsole({ manager, port, dictDir = DEFAULT_DICT_DIR, log
         return;
       }
 
+      if (req.method === 'POST' && url.pathname === '/api/options') {
+        const body = await readJsonBody(req);
+        await manager.setOptions({
+          keepEnglishTechLabels:
+            typeof body.keepEnglishTechLabels === 'boolean' ? body.keepEnglishTechLabels : undefined,
+          showFloatingToggle:
+            typeof body.showFloatingToggle === 'boolean' ? body.showFloatingToggle : undefined
+        });
+        sendJson(res, 200, {
+          ok: true,
+          keepEnglishTechLabels: manager.keepEnglishTechLabels,
+          showFloatingToggle: manager.showFloatingToggle
+        });
+        return;
+      }
+
       if (req.method === 'POST' && url.pathname === '/api/reload') {
         const bundle = loadDictionaries(dictDir);
         await manager.updateDictionaries(bundle);
@@ -408,7 +470,7 @@ export function startWebConsole({ manager, port, dictDir = DEFAULT_DICT_DIR, log
 
       if (req.method === 'POST' && url.pathname === '/api/custom') {
         const body = await readJsonBody(req);
-        const entries = upsertUserCustomEntry(body.source, body.target, dictDir);
+        const entries = upsertUserCustomEntry(body.source, body.target ?? '', dictDir);
         const bundle = loadDictionaries(dictDir);
         await manager.updateDictionaries(bundle);
         sendJson(res, 200, { ok: true, entries });

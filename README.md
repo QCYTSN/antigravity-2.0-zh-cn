@@ -36,7 +36,9 @@
   - 实时查看已挂载的 Antigravity 2.0 窗口及已替换节点数。
   - **一键无损切换中/英文**，无需重启客户端。
   - **新版本快速适配**：一键扫描当前页面尚未翻译的英文 UI 控件，在线填写译文并立刻生效。
-- **模块化词库 + 热更新**：内置 750+ 条高频精确词条与 66 条正则动态模板（支持忽略大小写、换行空白规范化、末尾标点保留、同源 `iframe` 与 Shadow DOM 覆盖），编辑 `dict/*.json` 保存即刻热推送。
+- **社区校对全量词库 + 一键同步**：合规集成 [yiheng8023/antigravity-chinese](https://github.com/yiheng8023/antigravity-chinese)（MIT 协议，详见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)）词库，合并后共 **5,180+ 条精确词条与 460+ 条正则规则**（支持 LRU 高速缓存、快捷键保留、同源 `iframe`、`attachShadow` 动态 Shadow DOM 拦截与 Settings 延迟挂载重扫）。支持双击 **`同步社区词库.bat`**（`npm run sync-dict`）一键拉取社区最新词库。
+- **界面内悬浮「中 / EN」切换球 & 技术档位保留英文**：窗口右下角提供可拖拽的半透明切换球（左键瞬切中/英文，右键切换“技术档位如 `Turbo` / `Auto` / `Request Review` / `High` 保留英文”），并在 `dict/user-custom.json` 支持译文留空 `""` 强制保留任意英文原文。
+- **精准 Antigravity 2.0 防误伤隔离**：针对 Antigravity 2.0 真实 DOM 精准跳过 Lexical 输入框、焦点输入区、用户消息、AI 正文/思考内容、侧栏对话标题、项目卡片、代码/Diff 查看器与终端，确保绝不误伤代码和聊天内容。
 - **自动兼容免 TUN 代理**：启动器默认自动探测环境变量、Windows 系统代理及常见本地代理端口，向 Antigravity 2.0 注入代理参数并放行 `localhost`，避免免 TUN 环境下后端失联导致项目会话列表加载为空。
 - **无黑窗桌面快捷方式**：一键生成带 Antigravity 官方图标的桌面快捷方式，日常双击使用体验与原版一致。
 
@@ -142,6 +144,7 @@ http://127.0.0.1:19222
 | `创建桌面快捷方式.bat` | 在桌面创建无黑窗、带官方图标的 `Antigravity 2.0 中文版` 快捷方式 |
 | `启动中文版.bat` / `npm start` | 在命令行窗口启动 Antigravity 2.0 并实时打印汉化挂载日志（排障首选） |
 | `打开管理面板.bat` | 在默认浏览器中打开 `http://127.0.0.1:19222` 管理面板 |
+| `同步社区词库.bat` / `npm run sync-dict` | 一键从上游 MIT 社区仓库拉取最新校对词库到 `dict/upstream/`（自动保留你的个人自定义覆盖） |
 | `导出未翻译词条.bat` / `npm run scan` | 一键全量扫描当前运行窗口中尚未翻译的英文 UI，导出为 `untranslated-report.json` 方便批量补全 |
 | `热附着汉化.bat` / `npm run attach` | 仅挂载汉化引擎（适用于 Antigravity 已以调试端口启动但需重连时） |
 | `npm run check` | 运行环境自检（Node 版本、程序路径、词库规模、端口与进程状态） |
@@ -162,7 +165,9 @@ http://127.0.0.1:19222
 | `webConsolePort` | `19222` | 本地 Web 管理面板端口（如端口冲突可自行修改） |
 | `autoOpenConsole` | `false` | 设为 `true` 时，每次启动中文版会自动弹出管理面板网页 |
 | `enabledOnStart` | `true` | 启动时是否默认开启中文汉化 |
-| `watchDictionaries` | `true` | 是否监听 `dict/` 目录变更并自动热更新词库 |
+| `keepEnglishTechLabels` | `false` | 设为 `true` 时，`Turbo`/`Auto`/`Default`/`Request Review`/`High`/`Medium`/`Low` 等技术档位保留英文，其余说明照常翻中文 |
+| `showFloatingToggle` | `true` | 是否在 Antigravity 2.0 窗口右下角显示可拖拽「中 / EN」悬浮切换按钮 |
+| `watchDictionaries` | `true` | 是否监听 `dict/` 及 `dict/upstream/` 目录变更并自动热更新词库 |
 | `pollIntervalMs` | `1500` | 检测新打开窗口/子面板的轮询间隔（毫秒） |
 | `maxTextLength` | `220` | 参与匹配的最大文本长度，超长段落自动跳过以防误伤正文 |
 | `extraLaunchArgs` | `[]` | 启动 `Antigravity.exe` 时额外附加的命令行参数 |

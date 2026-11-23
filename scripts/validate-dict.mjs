@@ -15,12 +15,16 @@ function main() {
       process.exit(1);
     }
     for (const [k, v] of Object.entries(parsed.entries)) {
-      if (typeof v !== 'string' || !v.trim()) {
-        console.error(`[错误] ${file} 中词条 "${k}" 的译文为空或非字符串`);
+      if (typeof v !== 'string') {
+        console.error(`[错误] ${file} 中词条 "${k}" 的译文非字符串`);
+        process.exit(1);
+      }
+      if (!v.trim() && file !== 'user-custom.json') {
+        console.error(`[错误] ${file} 中词条 "${k}" 的译文为空`);
         process.exit(1);
       }
       if (seenKeys.has(k) && file !== 'user-custom.json') {
-        console.warn(`[提示] 词条 "${k}" 同时存在于 ${seenKeys.get(k)} 与 ${file}（后者覆盖前者）`);
+        console.warn(`[提示] 本地词条 "${k}" 同时存在于 ${seenKeys.get(k)} 与 ${file}`);
         warnings++;
       }
       seenKeys.set(k, file);
@@ -29,7 +33,7 @@ function main() {
 
   const bundle = loadDictionaries(DEFAULT_DICT_DIR);
   console.log(
-    `[校验通过] 共 ${bundle.stats.filesLoaded} 个词库文件，${bundle.stats.totalEntries} 条精确词条，${bundle.stats.totalPatterns} 条正则规则，${warnings} 条重复提示。`
+    `[校验通过] 共 ${bundle.stats.filesLoaded} 个词库文件，合并后 ${bundle.stats.totalEntries} 条精确词条（含上游 MIT 词库 ${bundle.stats.upstreamEntries} 条），${bundle.stats.totalPatterns} 条正则规则，${warnings} 条本地重复提示。`
   );
 }
 

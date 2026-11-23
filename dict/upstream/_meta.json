@@ -1,0 +1,26 @@
+{
+  "source": "https://github.com/yiheng8023/antigravity-chinese",
+  "license": "MIT",
+  "branch": "main",
+  "syncedAt": "2026-11-21T09:07:38.397Z",
+  "files": [
+    {
+      "file": "zh-CN.json",
+      "exactCount": 4695,
+      "patternCount": 399,
+      "bytes": 484067
+    },
+    {
+      "file": "swarm.json",
+      "exactCount": 125,
+      "patternCount": 0,
+      "bytes": 9082
+    },
+    {
+      "file": "official-plugin-descriptions.json",
+      "exactCount": 10,
+      "patternCount": 0,
+      "bytes": 2035
+    }
+  ]
+}

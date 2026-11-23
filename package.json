@@ -1,7 +1,7 @@
 {
   "name": "antigravity-2.0-zh-cn",
-  "version": "1.0.0",
-  "description": "Google Antigravity 2.0 无损中文汉化引擎（零依赖 CDP 动态注入 + 词库热更新 + 本地管理面板）",
+  "version": "2.0.0",
+  "description": "Google Antigravity 2.0 无损中文汉化引擎（零依赖 CDP 动态注入 + 4800+ 社区校对词库 + 免 TUN 代理兼容 + 悬浮切换球）",
   "type": "module",
   "main": "src/index.mjs",
   "engines": {
@@ -12,6 +12,7 @@
     "attach": "node src/index.mjs attach",
     "check": "node src/index.mjs check",
     "scan": "node src/index.mjs scan",
+    "sync-dict": "node scripts/sync-upstream-dict.mjs",
     "validate": "node scripts/validate-dict.mjs",
     "test": "node --test test/*.test.mjs"
   },
